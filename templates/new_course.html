@@ -1,18 +1,20 @@
 {% extends "base.html" %}
 	{% block bodycontent %}
 		<div id="bodyarea">
-			Hello, {{nickname}}! <br>
-			<a href="{{logout}}">Click Here to sign out.</a>
-		
 			<div id="introText" class="introColumn">
-				<h1>New Course Page</h1>
-				<h3>Creating a course is simple. We just need some info from you:</h3>
+				<h1><u>Create A Course</u>  </h1>
+				<h3>Creating a course is simple! We just need some info from you:</h3>
 				<br>
-				<form method="post" action="/instructor">
+				<form method="post" action="/new_course">
 					Course Name: <input type="text" name="course"><br>
+					Course Number: <input type="number" min = "0" name="number" value ="0"><br>
 					Instructor Name: <input type="text" name="name"><br>
 					Instructor Email: <input type="text" name="email"><br>
-					<input type="submit">
+					University: <input type="text" name="university"><br>
+					Department: <input type="text" name="department"><br>
+					Semester: <input type="text" name ="semester"><br>
+					Year: <input type="number" name="year" min="{{current_year}}" value ="{{current_year}}"><br>
+					<input type="submit" value ="Create Course">
 				</form>
 			</div>
 		</div>

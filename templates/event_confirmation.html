@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+	{% block bodycontent %}
+        <div id="bodyarea">
+			<div id="introText" class="introColumn">          
+                <h1> Event Created Successfully</h1><br>
+                <div id="back"></div><br>
+                <script>
+                    var text = "<h3><a href ='/course-" + {{course_id}} + "'>Back</a></h3>";
+                    document.getElementById('back').innerHTML = text;
+                </script>
+            </div>
+        </div>
+    {% endblock %}

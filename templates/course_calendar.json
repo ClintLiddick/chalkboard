@@ -1,0 +1,27 @@
+{
+    "weeks" : [
+        {% for week in calendar %}{% if forloop.counter0 %},{% endif %}
+        {"days" : [
+            {% for date in week %}{% if forloop.counter0 %},{% endif %}
+                {% if date.month == month%}
+                    { "day" : "{{date.day}}", "events" : [
+                    {% if event_list %}                        
+                        {% for event in event_list %}                            
+                            {% if event.day == date.day %}
+                                { "value" : "1"},
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                    { "value" : "0"}
+                    ]}
+                {% else %}
+                    { "day" : " ", "events" : [{ "value" : "0"}]}
+                {% endif %}
+            {% endfor %}
+        ]}
+        {% endfor %} 
+    ], 
+    "month" : {{month}}, 
+    "month_name" : "{{month_name}}", 
+    "year" : {{year}}
+}

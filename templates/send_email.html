@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+	{% block bodycontent %}
+		<div id="bodyarea">
+				<h2>Emailing All Students in {{current_course.course_name}}: </h2>
+			<div id="introText" class="introColumn">
+				<form method="post" action="/email">
+					<h2>Message Body:</h2>
+					<textarea name = "message_body" cols="50" rows="10">Compose your e-mail here.</textarea><br><br><br>
+					<input type="submit" value="Send Email">
+				
+			</div>
+		</div>
+	{% endblock %}

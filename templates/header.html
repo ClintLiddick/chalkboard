@@ -1,4 +1,8 @@
 <div id="header">
 	<div id="logo"><a href="/">Chalkboard</a></div>
-	<div id="loginDiv"><a href="/login">Log In</a></div>
+	{% if user %}
+	<div id="loginDiv"><a href="{{logout}}">Log Out</a></div>
+	{% else %}
+	<div id="loginDiv"><a href="{{login}}">Log In</a></div>
+	{% endif %}
 </div>

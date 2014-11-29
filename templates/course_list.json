@@ -1,0 +1,3 @@
+[ {% for course in courses %}{% if forloop.counter0 %},{% endif %}
+{ "id" : "{{ course.course_id }}", "name" : "{{ course.course_name }}" }{% endfor %} 
+]

@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+	{% block bodycontent %}
+		<div id="bodyarea">
+			<div id="introText" class="introColumn">
+				<h1>{{course_name}} </h1>
+				<h2><u>{{course_number}}</h2></u>
+                <br>
+                <h3>{{instructor}}</h3>
+                <h3>{{email}}</h3>
+                <br>
+                <h3>{{university}}</h3>
+                <h3>{{department}}</h3>
+                <br>
+                <h3>{{semester}}</h3>
+                <h3>{{year}}</h3>
+                
+                <br>
+                <div id="test">
+                </div>
+                <br>_____________________<br>
+                <div id="test2">
+                </div>
+                <br>
+                <h3>CALENDAR</h3>
+                <div id="calendar"></div>
+                <script>
+					// this will give us the list of notes - we pass the results off to updateTitleList
+					function calendar(m,y) 
+					{
+						var xmlHttp = createXmlHttp();
+						
+						xmlHttp.onreadystatechange = function() 
+						{
+                        
+							if (xmlHttp.readyState == 4) 
+							{                            
+								var calendar = JSON.parse(xmlHttp.responseText); 
+                                updateCalendar(calendar);
+                            }
+                        }
+                        var params = "month="+m+"&year="+y+"&course="+{{course_id}};
+					  postParameters(xmlHttp, '/calendar', params);
+					}
+					
+					calendar(0,0); //Call function
+					
+					// this dynamically builds the calendar
+					function updateCalendar(calendar) 
+					{
+                        //we need to set which month/year the next/prev buttons point to
+                        //in case we are at the beggining/end of a year (January or December)
+                      var nextMonth = calendar.month + 1;
+                      var nextYear = calendar.year;
+                      var prevMonth = calendar.month - 1;
+                      var prevYear = calendar.year;
+					  
+                      if(calendar.month == 1)
+                      {
+                        prevMonth = 12;
+                        prevYear = calendar.year - 1;
+                      }
+                      if(calendar.month == 12)
+                      {
+                        nextMonth = 1;
+                        nextYear = calendar.year + 1;
+                      }
+					  var text = "<table border = '5px' cellpadding='25px'>"+
+                    "<tr>"+
+                        "<h1><button type='button' onclick='calendar(" + prevMonth + ", " + prevYear + ")'><  <</button>  "
+                        + calendar.month_name + " " + calendar.year+ 
+                        "  <button type='button' onclick='calendar(" + nextMonth + ", " + nextYear + ")'>>  ></button></h1>"+
+                    "</tr>"+
+                    "<tr>"+
+                        "<td class='calendar_weeks'>Su</td>"+
+                        "<td class='calendar_weeks'>Mo</td>"+
+                        "<td class='calendar_weeks'>Tu</td>"+
+                        "<td class='calendar_weeks'>We</td>"+
+                        "<td class='calendar_weeks'>Th</td>"+
+                        "<td class='calendar_weeks'>Fr</td>"+
+                        "<td class='calendar_weeks'>Sa</td>"+
+                    "</tr>";
+					  
+                      var weeks = calendar.weeks;
+					  if (weeks && weeks.length > 0) 
+					  {
+						for (var i = 0; i < weeks.length; i++) 
+						{
+                            text += '<tr>'
+                            var days = weeks[i].days;
+                            for(var j = 0; j < days.length; j++)
+                            {
+                                if(days[j].events[0].value == 1)
+                                {
+                                  text += "<td class='event'><a class ='event' href='/course-" + {{course_id}} 
+                                  + "-event-" + calendar.year 
+                                  + "-" + calendar.month
+                                  + "-" +days[j].day +"'>" 
+                                  + days[j].day + "</a></td>";
+                                }
+                                else
+                                {
+                                    text += "<td class='calendar'>" + days[j].day + "</td>";
+                                }
+                            }
+                            text += '</tr>';
+                        }                        
+						setText('calendar', text);
+					  }
+					}
+				
+					// this is just a convenience function to set the value of an HTML element
+					function setText(id, text) 
+					{
+						document.getElementById(id).innerHTML = text;
+					}
+
+					// we use this function to abstract the creation of the XML HTTP object.  
+					// Because of browser differences, we want to isolate browser-specific code.
+					function createXmlHttp() 
+					{
+						var xmlhttp;
+						
+						if (window.XMLHttpRequest) 
+						{
+							xmlhttp = new XMLHttpRequest();
+						} 
+						else 
+						{
+							xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+						}
+		
+						if (!(xmlhttp)) 
+						{
+							alert("your horrible browser does not support AJAX, get with it man");
+						}
+						return xmlhttp;
+					}
+
+					// Since we'll be posting parameters to a URL over and over again, we can use this 
+					// function to simplify the calls.  Also, since these calls are dependent on the
+					// XML HTTP object's methods, it's not a bad idea to abstract this into a separate
+					// function so that we can adapt easily if some of the object changes.
+					function postParameters(xmlHttp, target, parameters) 
+					{
+					  if (xmlHttp) 
+					  {
+						xmlHttp.open("POST", target, true);
+						xmlHttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                        xmlHttp.setRequestHeader("Content-length", parameters.length);
+						xmlHttp.send(parameters);
+					  }
+					}
+				</script>
+              
+			</div>
+		</div>
+	{% endblock %}

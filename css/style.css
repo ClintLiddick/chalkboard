@@ -1,6 +1,6 @@
 	@font-face { /* Load the new "chalk" font */
 		font-family: ChalkLetters;
-		src: url(../fonts/SqueakyChalkSound.ttf); 
+		src: url(../fonts/Sketchy.ttf); 
 	}
 	 
 	body {
@@ -32,56 +32,10 @@
 		margin: 1em;
 	}
 
-	#introText {
-
-	}
-
 	#introText p {
 		text-align: left;
 	}
-
-	#loginTables {
-
-	}
-
-    .introbodytable {
-    	/*margin-left: auto;
-    	margin-right: auto;
-    	margin-bottom: 15px;
-    	*//*max-width: 600px;*/
-    	margin: 0 auto;
-    }
-    
-    .introbodytable th {
-    	text-align: center;
-    	border: 2px solid #438EFF;
-    }
-    
-    .introbodytable td {
-		opacity: 0;
-        font-size: 20;
-        padding: 3px;
-        margin: 2px;
-        border: 2px solid #438EFF;
-        text-align: left;
-		-webkit-transition: opacity, 0.5s linear;
-		-moz-transition: opacity, 0.5s linear;
-		-ms-transition: opacity, 0.5s linear;
-		-o-transition: opacity, 0.5s linear;
-		transition: opacity, 0.5s linear;
-    }
 	
-	.introbodytable:hover td
-	{
-		opacity: 1;
-		-webkit-transition: opacity, 0.5s linear;
-		-moz-transition: opacity, 0.5s linear;
-		-ms-transition: opacity, 0.5s linear;
-		-o-transition: opacity, 0.5s linear;
-		transition: opacity, 0.5s linear;
-	}
-
-
     /*** Footer ***/
 
    	#footer {
@@ -105,6 +59,29 @@
 	a:active {
 	    color: #438EFF;
 	}
+    
+    button{
+        font-size: 30;
+    }
+    
+    td.calendar{
+        font-size : 30;
+        color : blue;
+    }
+    
+    td.calendar_weeks{
+        font-size : 30;
+        color : #438EFF;
+    }
+    
+    td.event{
+        font-size : 30;
+        color : red;
+    }
+    a.event{
+        font-size : 30;
+        color : red;
+    }
 
 
 	/**** 404/Error ****/
@@ -142,10 +119,16 @@
 		float: left;
 		color: #438EFF;
 		margin-left: 15px;
+		text-decoration: none;
 	}
 	
 	#logo a:hover{
 		text-shadow: 0 0 12px #505050;
+		text-decoration: none;
+	}
+	
+	#logo a {
+		text-decoration: none;
 	}
 	
 	#loginDiv {
@@ -154,8 +137,14 @@
 		float: right;
 		font-size: 23;
 		margin-right: 15px;
+		text-decoration: none;
 	}
 	
 	#loginDiv a:hover{
 		text-shadow: 0 0 12px #505050;
+		text-decoration: none;
+	}
+	
+	#loginDiv a {
+		text-decoration: none;
 	}

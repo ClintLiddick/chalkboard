@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+	{% block bodycontent %}
+		<div id="bodyarea">
+			<div id="introText" class="introColumn">
+                <h1>Currently Editing: {{course_name}}</h1>
+				<h2>From this page, the instructor can perform the following functions: </h2>
+				<br>
+				<h3>
+				<!--<a href="">Manage Students</a><br>-->
+				<a href="/documents">Upload Documents</a><br>
+				<!--<a href="">Manage Calendar</a><br>-->
+				<a href="/send_email">Email Class</a><br>
+				<!--<a href="">Manage Syllabus</a><br><br><br>-->
+				<a href="/instructor">Select a Different Course to Edit</a><br>
+                <div id="event_link"></div>
+                <script>
+                    var text = "<a href='/course-" + {{course_id}} + "-new_event'>Add a new event</a><br>";
+                    document.getElementById('event_link').innerHTML = text;
+                </script>
+				</ul>
+				</h3>
+			</div>
+		</div>
+	{% endblock %}
