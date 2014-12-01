@@ -5,10 +5,13 @@ import calendar
 from google.appengine.ext.webapp import template
 from google.appengine.api import users             
 from google.appengine.api import mail 
-from google.appengine.api import memcache    
+from google.appengine.api import memcache   
+from google.appengine.api import search  
 from google.appengine.ext import db 
-from google.appengine.ext import blobstore     
+from google.appengine.ext import blobstore   
+  
 from google.appengine.ext.webapp import blobstore_handlers     
+
 from datetime import date
 from datetime import time
 
@@ -637,7 +640,8 @@ class NewCourseHandler(webapp2.RequestHandler):
             course.year = int(self.request.get('year'))
             course.student_list = ["mlucient@gmail.com "] #TODO:  Remove hardcoded email for presentation
             course.is_active = True
-            course.course_id = generateID()
+            course_id = generateID()
+            course.course_id = course_id
             course.documents_list = [""]
             course.syllabus = None
             course.put()
@@ -646,6 +650,24 @@ class NewCourseHandler(webapp2.RequestHandler):
             user_data.courses.append(course.key()) #Add course key to user data
             user_data.put()
             memcache.set(user_data.user_id, user_data)
+            
+            new_course = search.Document(
+            doc_id = course_id,
+            fields = [
+                search.TextField(name='course_name', value = self.request.get('course')),
+                search.TextField(name='instructor', value = self.request.get('name')),
+                search.TextField(name='email', value = self.request.get('email')),
+                search.TextField(name='university', value = self.request.get('university')),
+                search.TextField(name='department', value = self.request.get('department')),
+                search.TextField(name='semester', value = self.request.get('semester')),
+                search.TextField(name='ID', value = str(course_id)),
+                search.NumberField(name='year', value = int(self.request.get('year')))
+                ])
+            try:
+                search.Index(name='courseIndex').put(new_course)
+            except search.Error:
+                logging.debug('Indexing ERROR!') 
+                self.redirect('/error')
             
             self.redirect('/instructor')
         else:
@@ -702,6 +724,132 @@ class UploadHandler(blobstore_handlers.BlobstoreUploadHandler) :
         #if no data was received, redirect to new course page (to make data)
         self.redirect(users.create_login_url('/instructor')) 
 
+class SearchHandler(webapp2.RequestHandler) :
+    """Request handler for Search page"""
+    def get(self):
+        #search should not be handled as a GET request ever (no searchable data has been posted!)
+        logging.debug('SearchHandler GET request: ' + str(self.request) + id)
+        self.redirect('/error')
+    
+    def post(self):
+        
+        #get the search index
+        index = search.Index(name='courseIndex')
+        
+        #get search parameters`
+        course = self.request.get('course')
+        instructor = self.request.get('instructor')
+        email = self.request.get('email')
+        university = self.request.get('university')
+        department = self.request.get('department')
+        semester = self.request.get('semester')
+        year = self.request.get('year')  
+        
+        query_exists = False 
+        #build the query string
+        
+        #The following is ugly, but basically you just don't want misplaced ORs or extra ORs in the query string        
+        query_str = ""
+        if str(course) != "":
+            query_str = query_str + "course_name=\"" + str(course) +"\"" 
+            query_exists = False
+        if str(instructor) != "":
+            if query_exists == True: 
+                query_str = query_str + " OR "
+            else:
+                query_exists = True
+            query_str = query_str + "instructor=\"" + str(instructor) +"\"" 
+        if str(email) != "":
+            if query_exists == True:
+                query_str = query_str + " OR "
+            else:
+                query_exists = True
+            query_str = query_str + "email=\"" + str(email) +"\""    
+        if str(university) != "":
+            if query_exists == True: 
+                query_str = query_str + " OR "
+            else:
+                query_exists = True
+            query_str = query_str + "university=\"" + str(university) +"\""        
+        if str(department) != "":
+            if query_exists == True: 
+                query_str = query_str + " OR "
+            else:
+                query_exists = True
+            query_str = query_str + "department=\"" + str(department) +"\""      
+        if str(semester) != "":
+            if query_exists == True: 
+                query_str = query_str + " OR "
+            else:
+                query_exists = True
+            query_str = query_str + "semester=\"" + str(semester) +"\""     
+        if str(year) != "":
+            if query_exists == True: 
+                query_str = query_str + " OR "
+            else:
+                query_exists = True
+            query_str = query_str + "year=\"" + str(year) +"\""     
+        ##query_str = query_str + " OR email=" + str(email) + " OR university=" + str(university)
+        ##query_str = query_str + " OR department=" + str(department) + " OR semester=" + str(semester)
+        ##query_string = query_string + " OR year=" + str(year)
+        
+        ##On the reasonably safe assumption that nobody is named NULL0NULL
+        ##Because the empty query_str would return everything in the search index up to the search limit, indiscriminately.
+        if query_str == "":
+            query_str = "instructor=\"" + "NULL" +"\""
+        
+        logging.warning(query_str)
+        
+        #get the 3 sort keys
+        sort1 = search.SortExpression(expression='university', direction=search.SortExpression.DESCENDING, default_value="")
+        sort2 = search.SortExpression(expression='instructor', direction=search.SortExpression.DESCENDING, default_value="")
+        sort3 = search.SortExpression(expression='course', direction=search.SortExpression.DESCENDING, default_value="")
+        sort_opts = search.SortOptions(expressions=[sort1,sort2,sort3])
+        
+        #build query options
+        query_options = search.QueryOptions(
+            limit = 10,
+            sort_options = sort_opts)
+        
+        #search
+        search_list = []
+        query = search.Query(query_string=query_str, options=query_options)
+        try:
+            result = index.search(query)
+            logging.warning("Number of documents found: " + str(int(result.number_found))) 
+            
+            for doc in result:
+                result_x = {
+                'course_name' : doc.field('course_name').value,
+                'instructor' : doc.field('instructor').value,
+                'email' : doc.field('email').value,
+                'university' : doc.field('university').value, 
+                'department' : doc.field('department').value,
+                'semester' : doc.field('semester').value,
+                ##To make sure that year formats as '2014' and not '2014.0'
+                'year' : "{:.0f}".format(doc.field('year').value),
+                'url' : "/course-" + str(doc.field('ID').value)
+                }
+                search_list.append(result_x)
+                                       
+        except search.Error:
+            logging.debug("Error with querying!")
+           
+               
+        template_values = {
+                    'page_title' : 'Search Results',
+                    'current_year' : date.today().year,
+                    'current_month' : date.today().month,
+                    'user' : getCurrentUserData(),
+                    'search_list' : search_list,
+                    'login' : users.create_login_url('/'),  
+                    
+                }
+
+        renderTemplate(self.response, 'search.html', template_values) 
+         
+        
+        
 # list of URI/Handler routing tuples
 # the URI is a regular expression beginning with root '/' char
 routeHandlers = [
@@ -720,6 +868,7 @@ routeHandlers = [
     (r'/upload', UploadHandler),
     (r'/calendar', CourseCalendarHandler),
     (r'/new_event', NewCalendarEventHandler),
+    (r'/search', SearchHandler),
     (r'/.*', ErrorHandler)
 ]
 

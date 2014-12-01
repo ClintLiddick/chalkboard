@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+	{% block bodycontent %}
+		<div id="bodyarea">
+			<div id="introText" class="introColumn">
+				<h1>Your search results: </h1>
+                {% for search in search_list %}
+                <h2><a href = {{search.url}}>{{search.course_name}}</a></h2>
+                <h3>{{search.instructor}},
+                {{search.department}} at {{search.university}},                
+                {{search.semester}}
+                {{search.year}}
+                </h3>
+                {% endfor %}
+                <br><br>       
+                <h2><p><b><center>Search again: </center></b></p></h2>
+			
+				<form method="post" action="/search">
+					Course Name: <input type="text" name="course" value ="{{search.course_name}}"><br>
+					Instructor Name: <input type="text" name="instructor" value = "{{search.course_name}}"><br>
+					Instructor Email: <input type="text" name="email"><br>
+					University: <input type="text" name="university" value ="{{search.university}}"><br>
+					Department: <input type="text" name="department" value ="{{search.department}}"><br>
+					Semester: <input type="text" name ="semester" value ="{{search.semester}}"><br>
+					Year: <input type="number" name="year" min="{{current_year}}" value ="{{search.year}}"><br>
+					<input type="submit" value ="Find My Course!">
+				</form>
+                </b>
+                
+			</div>
+             </div>
+         </div>
+    {% endblock %}}

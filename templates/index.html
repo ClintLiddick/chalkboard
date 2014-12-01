@@ -8,12 +8,21 @@
 			systems require dedicated administrators and seem to make life harder, Chalkboard is simple.</p>
 
 			<p><b><u>Instructors</u></b> can simply <a href="{{login}}">
-			Login</a> with their Google Account and easily begin creating class pages. You will seamlessly be able to 
+			Login</a> with their Google Account and easily begin creating and editing class pages. You will seamlessly be able to 
 			import student lists, set up meeting times, post solution guides and announcements, and more -- all from a simple dashboard.</p>
 
-			<p><u><b>Students</b></u> can begin by searching for their instructor, university, or course name below: </p>
+			<p><u><b>Students</b></u> can begin by searching for a particular course: </p>
 			
-			Search bar goes here (eventually)
+				<form method="post" action="/search">
+					Course Name: <input type="text" name="course"><br>
+					Instructor Name: <input type="text" name="instructor"><br>
+					Instructor Email: <input type="text" name="email"><br>
+					University: <input type="text" name="university"><br>
+					Department: <input type="text" name="department"><br>
+					Semester: <input type="text" name ="semester"><br>
+					Year: <input type="number" name="year" min="{{current_year}}" value ="{{current_year}}"><br>
+					<input type="submit" value ="Find My Course!">
+				</form>
 			</div>
 		</div>
 	{% endblock %}
