@@ -673,57 +673,7 @@ class NewCourseHandler(webapp2.RequestHandler):
         else:
             #Else - not logged in or not in our datastore
             self.redirect(users.create_login_url('/instructor'))   
-
-class SendEmailHandler(webapp2.RequestHandler):
-    def get(self):
-        #logging.error('Here successfully, I guess...')
-        user_data = getCurrentUserData()
-        
-        if user_data :  
-            current_course = user_data.current_course_selected
-            logging.error(current_course)
-            course_info = getCourseData(current_course)
             
-            if course_info :
-                students = course_info.student_list     
-                template_values = {
-                    'current_course' : course_info,
-                    'student_list' : students,
-                    'page_title' : "Chalkboard",
-                    'current_year' : date.today().year,
-                    'logout' : users.create_logout_url('/'),     
-                    'login' : users.create_login_url('/'),  
-                    'user' : getCurrentUserData()
-                }
-                
-                renderTemplate(self.response, 'send_email.html', template_values)     
-                return
-
-        #Else - redirect
-        self.redirect('/instructor')
-        #logging.error('SendEmail Handler: not logged in for some reason.')  
-        
-class UploadHandler(blobstore_handlers.BlobstoreUploadHandler) :
-    def post(self):
-        user_data = getCurrentUserData()
-        
-        if user_data:
-            upload_files = self.get_uploads('file')
-            blob_info = upload_files[0];
-                    
-            course = getCourseData(user_data.current_course_selected)
-            
-            if course:
-                course.document_list.append(blob_info.key());
-                course.put();
-                memcache.set(course.course_id, course)
-                                
-                self.redirect('/course-' + user_data.current_course_selected)
-                return            
-                
-        #if no data was received, redirect to new course page (to make data)
-        self.redirect(users.create_login_url('/instructor')) 
-
 class SearchHandler(webapp2.RequestHandler) :
     """Request handler for Search page"""
     def get(self):
@@ -848,6 +798,57 @@ class SearchHandler(webapp2.RequestHandler) :
 
         renderTemplate(self.response, 'search.html', template_values) 
          
+class SendEmailHandler(webapp2.RequestHandler):
+    def get(self):
+        #logging.error('Here successfully, I guess...')
+        user_data = getCurrentUserData()
+        
+        if user_data :  
+            current_course = user_data.current_course_selected
+            logging.error(current_course)
+            course_info = getCourseData(current_course)
+            
+            if course_info :
+                students = course_info.student_list     
+                template_values = {
+                    'current_course' : course_info,
+                    'student_list' : students,
+                    'page_title' : "Chalkboard",
+                    'current_year' : date.today().year,
+                    'logout' : users.create_logout_url('/'),     
+                    'login' : users.create_login_url('/'),  
+                    'user' : getCurrentUserData()
+                }
+                
+                renderTemplate(self.response, 'send_email.html', template_values)     
+                return
+
+        #Else - redirect
+        self.redirect('/instructor')
+        #logging.error('SendEmail Handler: not logged in for some reason.')  
+        
+class UploadHandler(blobstore_handlers.BlobstoreUploadHandler) :
+    def post(self):
+        user_data = getCurrentUserData()
+        
+        if user_data:
+            upload_files = self.get_uploads('file')
+            blob_info = upload_files[0];
+                    
+            course = getCourseData(user_data.current_course_selected)
+            
+            if course:
+                course.document_list.append(blob_info.key());
+                course.put();
+                memcache.set(course.course_id, course)
+                                
+                self.redirect('/course-' + user_data.current_course_selected)
+                return            
+                
+        #if no data was received, redirect to new course page (to make data)
+        self.redirect(users.create_login_url('/instructor')) 
+
+
         
         
 # list of URI/Handler routing tuples
