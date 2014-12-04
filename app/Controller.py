@@ -537,19 +537,44 @@ class NewCalendarEventHandler(webapp2.RequestHandler):
                 event.notes = self.request.get('event_notes')
                 
                 #event date info
-                date_raw = self.request.get('event_date')
-                date_parts = date_raw.split('-')
-                my_date = date(int(date_parts[0]), int(date_parts[1]), int(date_parts[2]))
+                date_time_raw = (self.request.get('event_datetime').encode('ascii','ignore'))
+                                               
+                if type(date_time_raw) is str:
+                    logging.warning("It's a str!")
+                else:
+                    logging.warning("Not a str!")
+                                               
+                year = date_time_raw[0:4]
+                month = date_time_raw[5:7]
+                day = date_time_raw[8:10]
+                hour = date_time_raw[11:13]
+                minute = date_time_raw[14:16]
+                
+                logging.warning(year)
+                logging.warning(month)
+                logging.warning(day)
+                logging.warning(hour)
+                logging.warning(minute)
+               
+                
+                #datetime_parts = re.split('/', date_time_raw)
+                
+                #logging.warning(datetime_parts)
+                
+                my_date = date(int(year), int(month), int(day))
                 event.year = my_date.year
                 event.month = my_date.month
                 event.day = my_date.day
                 
                 #event start time info
-                time_raw = self.request.get('event_time')
-                time_parts_raw = time_raw.split('-')
-                time_parts = time_parts_raw[0].split(':')
-                my_time = time(int(time_parts[0]), int(time_parts[1]))
+                
+                #time_raw = self.request.get('event_time')
+                #time_parts_raw = time_raw.split('-')
+                #time_parts = time_parts_raw[0].split(':')
+                my_time = time(int(hour), int(minute))
                 event.time = my_time
+                
+                logging.warning("Something is happening!")
                 
                 event.put()
                 template_values = {

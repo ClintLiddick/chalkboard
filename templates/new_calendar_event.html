@@ -2,17 +2,31 @@
 	{% block bodycontent %}
 		<div id="bodyarea">
 			<div id="introText" class="introColumn">
+            <link rel="stylesheet" type ="text/css" href="/js/jquery.datetimepicker.css">
+             
+                <script src ="/js/jquery-2.1.1.js" type ="text/javascript"></script>
+                <script src ="/js/jquery.datetimepicker.js" type ="text/javascript"></script>   
+                <script src ="/js/jquery-ui.js"></script>
+                
 				<h1><u>Create A New Event</u>  </h1>
 				<h3>Creating a new calendar event is simple! We just need some info from you:</h3>
 				<br>
 				<form method="post" action="/new_event">
 					Event Name: <input type="text" name="event_name"><br>
-					Date: <input type="date" placeholder="2014-12-31" name="event_date"><br>
-					Start Time: <input type="time" placeholder="5:00" name="event_time"><br>
-					Duration: <br><input type="range" step="1" min="0" max="100" value="0"name="event_dur_h"> hours<br>
-					<input type="range" step="15" min="0" max="60" value="0"name="event_dur_m"> minutes<br>
+					Start Date and Start Time: <input id="datetimepicker" name ="event_datetime" type="event_datetime"><br>
+                     <script>
+                    $(function() {
+                    $( "#datetimepicker" ).datetimepicker();
+                    });
+                    </script>
+					Duration: <input type="number" min="0" max="168" value="0"name="event_dur_h"> hours<br> Duration:
+					<input type="number" min="0" max="60" value="0"name="event_dur_m"> minutes<br>
                     Notes: <input type="text" size="50" name="event_notes">
-                    <input type="hidden" name="course_id" value="{{course_id}}">
+                    <div id="hiddenText"></div>
+                    <script>
+                        var text = "<input type='hidden' name='course_id' value=" + {{course_id}} +">";
+                        document.getElementById('hiddenText').innerHTML = text;
+					</script>
                     <br>
                     <input type="submit" value ="Create Event">
 				</form>
