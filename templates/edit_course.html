@@ -13,7 +13,58 @@
 					<!--<a href="">Manage Syllabus</a><br><br><br>-->
 					<a href="/instructor">Select a Different Course to Edit</a><br>
 					<a href="/{{course_id}}-new_event">Add a new event</a><br>
+					<br><br>
+					<button onclick="popupConfirmation()">Delete Course</button>
 				</h3>
+				
+				<script>
+					function popupConfirmation() 
+					{
+						if (confirm("Are you sure you want to delete this course?\n\nThis CANNOT be undone!") == true) 
+						{
+							var xmlHttp = createXmlHttp();
+			
+							postParameters(xmlHttp, '/instructor', 'id={{course_id}}');
+							window.location.replace("/course_deleted");
+						} 
+					}
+					
+					// we use this function to abstract the creation of the XML HTTP object.  
+					// Because of browser differences, we want to isolate browser-specific code.
+					function createXmlHttp() 
+					{
+						var xmlhttp;
+						
+						if (window.XMLHttpRequest) 
+						{
+							xmlhttp = new XMLHttpRequest();
+						} 
+						else 
+						{
+							xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+						}
+		
+						if (!(xmlhttp)) 
+						{
+							alert("your horrible browser does not support AJAX, get with it man");
+						}
+						return xmlhttp;
+					}
+
+					// Since we'll be posting parameters to a URL over and over again, we can use this 
+					// function to simplify the calls.  Also, since these calls are dependent on the
+					// XML HTTP object's methods, it's not a bad idea to abstract this into a separate
+					// function so that we can adapt easily if some of the object changes.
+					function postParameters(xmlHttp, target, parameters) 
+					{
+					  if (xmlHttp) 
+					  {
+						xmlHttp.open("POST", target, false);
+						xmlHttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+						xmlHttp.send(parameters);
+					  }
+					}
+				</script>
 			</div>
 		</div>
 	{% endblock %}
