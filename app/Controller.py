@@ -108,7 +108,7 @@ def getCourseData(courseID) : #Returns the CourseData for the current course pag
     courseCache = memcache.get(courseID)
     
     if courseCache is not None:
-        if isinstance(courseCache, CourseData): #Make sure we didn't get a UserData that mapped to the same ID
+        if isinstance(courseCache, CourseData) and courseCache.is_active: #Make sure we didn't get a UserData that mapped to the same ID
             return courseCache
         else:  
             return None
@@ -118,8 +118,11 @@ def getCourseData(courseID) : #Returns the CourseData for the current course pag
         
         if c.count(1):
             for course in c.run():
-                memcache.set(courseID, course)
-                return course
+                if course.is_active == True:
+                    memcache.set(courseID, course)
+                    return course
+                else:
+                    return None
                 
     return None
 
@@ -266,7 +269,23 @@ class CourseHandler(webapp2.RequestHandler) :
                 renderTemplate(self.response, 'course.html', template_values) 
         else:
             #redirect to error if course wasn't found (or if 2 courses share an ID???)
-            self.redirect('/error')        
+            self.redirect('/error')   
+
+class CourseDeletedHandler(webapp2.RequestHandler) :
+    def get(self):
+        logging.debug('AboutHandler GET request: ' + str(self.request))
+        if(getCurrentUserData()):
+            template_values = {
+                'page_title' : "Course Deleted",
+                'current_year' : date.today().year,
+                'user' : getCurrentUserData(),
+                'logout' : users.create_logout_url('/'),
+                'login' : users.create_login_url('/')
+            }
+
+            renderTemplate(self.response, 'course_deleted.html', template_values)
+        else :
+            self.redirect('/')
         
 class CourseListHandler(webapp2.RequestHandler) :
     def post(self):
@@ -423,6 +442,15 @@ class InstructorHandler(webapp2.RequestHandler):
             }
             
             renderTemplate(self.response, 'instructor.html', template_values)
+            
+    def post(self):
+        id = self.request.get('id');
+        
+        if(userCanEditCourse(id)):
+            course_data = getCourseData(id)
+            course_data.is_active = False
+            course_data.put()
+            memcache.set(id, course_data)
 
     def handle_exception(self, exception, debug):
         # overrides the built-in master exception handler
@@ -872,6 +900,7 @@ routeHandlers = [
     ('/([a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-?[89ab][a-f0-9]{3}-[a-f0-9]{12})', CourseHandler), #Default catch all to handle a course page request
     ('/([a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12})-event-(\d+)-(\d+)-(\d+)', EventListHandler),
     (r'/course_list', CourseListHandler), #Handles JSON to list courses on /instructor
+    (r'/course_deleted', CourseDeletedHandler),
     (r'/documents', DocumentsHandler),
     (r'/email', EmailHandler),
     (r'/error', ErrorHandler),
