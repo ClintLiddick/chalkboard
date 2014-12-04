@@ -453,10 +453,7 @@ class InstructorHandler(webapp2.RequestHandler):
             memcache.set(id, course_data)
             doc_index = search.Index(name='courseIndex')
             doc_index.delete(id)
-            #delete these three lines after running one delete of a bogus course
-            doc_index.delete("d510ac70-ba75-4fd2-9fac-921098447871") 
-            doc_index.delete("d569bc1d-18b9-4932-8021-f1676de2be11")
-            doc_index.delete("71bdd053-564b-48ca-9a2a-d750ef61eb19")
+           
 
     def handle_exception(self, exception, debug):
         # overrides the built-in master exception handler
