@@ -531,7 +531,7 @@ class NewCalendarEventHandler(webapp2.RequestHandler):
                 #event duration
                 durh = self.request.get('event_dur_h')
                 durm = self.request.get('event_dur_m')
-                event.duration = str(durh) + 'hr ' + str(durm) + 'mi'
+                event.duration = str(durh) + 'hr ' + str(durm) + 'min'
                 
                 #event notes
                 event.notes = self.request.get('event_notes')
