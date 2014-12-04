@@ -19,8 +19,8 @@
 							{                                
 								var courses = JSON.parse(xmlHttp.responseText);
 								updateCourseList(courses);
+							}
 						}
-					  }
 					  postParameters(xmlHttp, '/course_list', '');
 					}
 					
@@ -35,7 +35,10 @@
 					  {
 						for (var i = 0; i < courses.length; i++) 
 						{
-						  text += '<a href="/' + courses[i].id + '">' + courses[i].name + '</a><br>';
+							if(courses[i].is_active === "True")
+							{
+								text += '<a href="/' + courses[i].id + '">' + courses[i].name + '</a><br>';
+							}
 						}
 						 setText('courselist', text);
 					  }
