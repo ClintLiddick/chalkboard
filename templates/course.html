@@ -24,7 +24,7 @@
                 <h3>CALENDAR</h3>
                 <div id="calendar"></div>
                 <script>
-					// this will give us the list of notes - we pass the results off to updateTitleList
+					// this will give us the list of notes - we pass the results off to updateCalendar
 					function calendar(m,y) 
 					{
 						var xmlHttp = createXmlHttp();
@@ -38,7 +38,7 @@
                                 updateCalendar(calendar);
                             }
                         }
-                        var params = "month="+m+"&year="+y+"&course="+{{course_id}};
+                        var params = "month="+m+"&year="+y+"&course={{course_id}}";
 					  postParameters(xmlHttp, '/calendar', params);
 					}
 					
@@ -91,7 +91,7 @@
                             {
                                 if(days[j].events[0].value == 1)
                                 {
-                                  text += "<td class='event'><a class ='event' href='/course-" + {{course_id}} 
+                                  text += "<td class='event'><a class ='event' href='/{{course_id}}" 
                                   + "-event-" + calendar.year 
                                   + "-" + calendar.month
                                   + "-" +days[j].day +"'>" 

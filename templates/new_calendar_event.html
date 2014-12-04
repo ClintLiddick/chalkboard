@@ -7,16 +7,12 @@
 				<br>
 				<form method="post" action="/new_event">
 					Event Name: <input type="text" name="event_name"><br>
-					Date: <input type="date" name="event_date"><br>
-					Start Time: <input type="time" name="event_time"><br>
+					Date: <input type="date" placeholder="2014-12-31" name="event_date"><br>
+					Start Time: <input type="time" placeholder="5:00" name="event_time"><br>
 					Duration: <br><input type="range" step="1" min="0" max="100" value="0"name="event_dur_h"> hours<br>
 					<input type="range" step="15" min="0" max="60" value="0"name="event_dur_m"> minutes<br>
                     Notes: <input type="text" size="50" name="event_notes">
-                    <div id="hiddenText"></div>
-                    <script>
-                        var text = "<input type='hidden' name='course_id' value=" + {{course_id}} +">";
-                        document.getElementById('hiddenText').innerHTML = text;
-					</script>
+                    <input type="hidden" name="course_id" value="{{course_id}}">
                     <br>
                     <input type="submit" value ="Create Event">
 				</form>
