@@ -855,7 +855,7 @@ class UploadHandler(blobstore_handlers.BlobstoreUploadHandler) :
                 course.put();
                 memcache.set(course.course_id, course)
                                 
-                self.redirect('/course-' + user_data.current_course_selected)
+                self.redirect(user_data.current_course_selected)
                 return            
                 
         #if no data was received, redirect to new course page (to make data)
