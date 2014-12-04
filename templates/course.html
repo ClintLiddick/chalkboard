@@ -2,26 +2,10 @@
 	{% block bodycontent %}
 		<div id="bodyarea">
 			<div id="introText" class="introColumn">
-				<h1>{{course_name}} </h1>
-				<h2><u>{{course_number}}</h2></u>
-                <br>
-                <h3>{{instructor}}</h3>
-                <h3>{{email}}</h3>
-                <br>
-                <h3>{{university}}</h3>
-                <h3>{{department}}</h3>
-                <br>
-                <h3>{{semester}}</h3>
-                <h3>{{year}}</h3>
-                
-                <br>
-                <div id="test">
-                </div>
-                <br>_____________________<br>
-                <div id="test2">
-                </div>
-                <br>
-                <h3>CALENDAR</h3>
+                <h2>{{university}}, {{semester}} {{year}}</h2>
+				<h1>{{department}} {{course_number}} -- {{course_name}} </h1>
+				<h2>{{instructor}},  <u><a href="mailto:{{email}}">{{email}}</h2></u></a>
+
                 <div id="calendar"></div>
                 <script>
 					// this will give us the list of notes - we pass the results off to updateCalendar
